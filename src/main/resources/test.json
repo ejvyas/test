@@ -1,0 +1,323 @@
+{
+  "createdOn": "20191008T172352.496 GMT",
+  "createdBy": "DM release administrator",
+  "id": "AppName!ATEST",
+  "updatedOn": "20191008T172352.496 GMT",
+  "updatedBy": "DM release administrator",
+  "accessGroup": "AppName:Administrators",
+  "applicationName": "AppName",
+  "applicationVersion": "01.01",
+  "buildCount": "0",
+  "lastBuildID": "",
+  "devRepoName": "DEV",
+  "productionReady": true,
+  "mergePolicy": "New",
+  "pipelineLabel": "ATEST",
+  "pipelineName": "ATEST",
+  "prodRepoName": "PROD",
+  "productName": "AppName",
+  "productVersion": "01.01",
+  "rulesetPassword": "",
+  "startBuildOnBranchMerge": true,
+  "status": "IDLE",
+  "useBranches": true,
+  "deployTestCases": true,
+  "testCasesSupported": true,
+  "testRapAccessGroup": "BranchApp:Administrators",
+  "testRapProductName": "BranchApp",
+  "testRapProductVersion": "01.01",
+  "testRapDeploymentStage": "Staging",
+  "testRapApplicationName": "BranchApp",
+  "testRapApplicationVersion": "01.01",
+  "archiveBuildsForCloud": "",
+  "jenkins": {
+    "url": "",
+    "authenticationProfile": ""
+  },
+  "dependencies": [],
+  "stages": [
+    {
+      "authenticationProfile": "DMAppAdmin",
+      "currentBuildID": "",
+      "skipped": false,
+      "name": "Development",
+      "url": "http://url",
+      "steps": [
+        {
+          "name": "ManualTask",
+          "description": "Dev Task description",
+          "taskSpecialHanding": "",
+          "defaultCloudTask": false,
+          "parameters": {
+            "AssignedTo": "\"operator\"",
+            "JobName": "Dev Task"
+          }
+        },
+        {
+          "name": "ProcessTask",
+          "description": "",
+          "taskSpecialHanding": "",
+          "defaultCloudTask": false,
+          "parameters": {
+            "pyIsTaskAsync": false,
+            "pyPurpose": "CD",
+            "pyTaskName": "Check guardrail compliance",
+            "pyThresholdGuardrailScore": 4,
+            "pyTaskDescription": "pyTaskDescription",
+            "pyTaskType": "ApplicationGuardrail"
+          }
+        },
+        {
+          "name": "PublishRAP",
+          "description": "Package Build",
+          "taskSpecialHanding": "",
+          "defaultCloudTask": false,
+          "parameters": {
+            "DoPackage": "true",
+            "toProdcutionRepo": "false",
+            "RepoName": "dev"
+          }
+        },
+        {
+          "name": "ProcessTask",
+          "description": "",
+          "taskSpecialHanding": "ProductionPreRequisite",
+          "defaultCloudTask": false,
+          "parameters": {
+            "pyIsTaskAsync": false,
+            "pyPurpose": "CD",
+            "pyTaskName": "Verify security checklist",
+            "pyThresholdGuardrailScore": 90,
+            "pyTaskDescription": "pyTaskDescription",
+            "pyTaskType": "SecurityChecklist"
+          }
+        },
+        {
+          "name": "ManualTask",
+          "description": "",
+          "taskSpecialHanding": "ProductionPreRequisite",
+          "defaultCloudTask": false,
+          "parameters": {
+            "AssignedTo": "\"DMReleaseAdmin\"",
+            "JobName": "Approve for production"
+          }
+        },
+        {
+          "name": "PublishRAP",
+          "description": "Package Build",
+          "taskSpecialHanding": "ProductionPreRequisite",
+          "defaultCloudTask": false,
+          "parameters": {
+            "DoPackage": "true",
+            "RepoName": "prod",
+            "toProductionRepo": "true"
+          }
+        }
+      ]
+    },
+    {
+      "authenticationProfile": "DMAppAdmin",
+      "currentBuildID": "",
+      "skipped": true,
+      "name": "Quality Assurance",
+      "url": "",
+      "steps": [
+        {
+          "name": "ManualTask",
+          "description": "QA Task Description",
+          "taskSpecialHanding": "",
+          "defaultCloudTask": false,
+          "parameters": {
+            "AssignedTo": "\"operator\"",
+            "JobName": "QA Task"
+          }
+        },
+        {
+          "name": "ProcessTask",
+          "description": "",
+          "taskSpecialHanding": "",
+          "defaultCloudTask": false,
+          "parameters": {
+            "pyIsTaskAsync": false,
+            "pyPurpose": "CD",
+            "pyTaskName": "Check guardrail compliance",
+            "pyThresholdGuardrailScore": 2,
+            "pyTaskDescription": "pyTaskDescription",
+            "pyTaskType": "ApplicationGuardrail"
+          }
+        },
+        {
+          "name": "DeployRAP",
+          "description": "Deploy Build",
+          "taskSpecialHanding": "",
+          "defaultCloudTask": false,
+          "parameters": {
+            "RepoName": "dev"
+          }
+        },
+        {
+          "name": "ProcessTask",
+          "description": "",
+          "taskSpecialHanding": "",
+          "defaultCloudTask": false,
+          "parameters": {
+            "pyIsTaskAsync": false,
+            "pyPurpose": "CD",
+            "pyTaskName": "Check guardrail compliance",
+            "pyThresholdGuardrailScore": 1,
+            "pyTaskDescription": "pyTaskDescription",
+            "pyTaskType": "ApplicationGuardrail"
+          }
+        },
+        {
+          "name": "ProcessTask",
+          "description": "",
+          "taskSpecialHanding": "",
+          "defaultCloudTask": false,
+          "parameters": {
+            "pyIsTaskAsync": false,
+            "pyPurpose": "CD",
+            "pyTaskName": "Enable test coverage",
+            "pyTaskDescription": "pyTaskDescription",
+            "pyTaskType": "StartTestCoverage"
+          }
+        },
+        {
+          "name": "Run Pega Units",
+          "description": "",
+          "taskSpecialHanding": "",
+          "defaultCloudTask": false,
+          "parameters": {
+            "AccessGroup": "BranchApp:Administrators"
+          }
+        },
+        {
+          "name": "ProcessTask",
+          "description": "",
+          "taskSpecialHanding": "ProductionPreRequisite",
+          "defaultCloudTask": false,
+          "parameters": {
+            "pyThresholdCoveragePercentage": 0,
+            "pyIsTaskAsync": false,
+            "pyPurpose": "CD",
+            "pyTaskName": "Validate test coverage",
+            "pyTaskDescription": "pyTaskDescription",
+            "pyTaskType": "StopTestCoverage"
+          }
+        }
+      ]
+    },
+    {
+      "authenticationProfile": "DMAppAdmin",
+      "currentBuildID": "",
+      "skipped": true,
+      "name": "Staging",
+      "url": "",
+      "steps": [
+        {
+          "name": "ManualTask",
+          "description": "Stage task description",
+          "taskSpecialHanding": "",
+          "defaultCloudTask": false,
+          "parameters": {
+            "AssignedTo": "\"operator\"",
+            "JobName": "Stage task"
+          }
+        },
+        {
+          "name": "ProcessTask",
+          "description": "",
+          "taskSpecialHanding": "",
+          "defaultCloudTask": false,
+          "parameters": {
+            "pyIsTaskAsync": false,
+            "pyPurpose": "CD",
+            "pyTaskName": "Verify security checklist",
+            "pyTaskDescription": "pyTaskDescription",
+            "pyTaskType": "SecurityChecklist"
+          }
+        },
+        {
+          "name": "DeployRAP",
+          "description": "Deploy Build",
+          "taskSpecialHanding": "",
+          "defaultCloudTask": false,
+          "parameters": {
+            "RepoName": "dev"
+          }
+        },
+        {
+          "name": "ProcessTask",
+          "description": "",
+          "taskSpecialHanding": "",
+          "defaultCloudTask": false,
+          "parameters": {
+            "pyIsTaskAsync": false,
+            "pyPurpose": "CD",
+            "pyTaskName": "Check guardrail compliance",
+            "pyThresholdGuardrailScore": 1,
+            "pyTaskDescription": "pyTaskDescription",
+            "pyTaskType": "ApplicationGuardrail"
+          }
+        }
+      ]
+    },
+    {
+      "authenticationProfile": "DMAppAdmin",
+      "currentBuildID": "",
+      "skipped": false,
+      "name": "Production",
+      "url": "http://url",
+      "steps": [
+        {
+          "name": "ManualTask",
+          "description": "Prod Task description",
+          "taskSpecialHanding": "",
+          "defaultCloudTask": false,
+          "parameters": {
+            "AssignedTo": "\"operator\"",
+            "JobName": "Prod Task"
+          }
+        },
+        {
+          "name": "ProcessTask",
+          "description": "",
+          "taskSpecialHanding": "",
+          "defaultCloudTask": false,
+          "parameters": {
+            "pyIsTaskAsync": false,
+            "pyPurpose": "CD",
+            "pyTaskName": "Check guardrail compliance",
+            "pyThresholdGuardrailScore": 3,
+            "pyTaskDescription": "pyTaskDescription",
+            "pyTaskType": "ApplicationGuardrail"
+          }
+        },
+        {
+          "name": "DeployRAP",
+          "description": "Deploy Build",
+          "taskSpecialHanding": "",
+          "defaultCloudTask": false,
+          "parameters": {
+            "RepoName": "prod"
+          }
+        },
+        {
+          "name": "ProcessTask",
+          "description": "",
+          "taskSpecialHanding": "",
+          "defaultCloudTask": false,
+          "parameters": {
+            "pyIsTaskAsync": false,
+            "pyPurpose": "CD",
+            "pyTaskName": "Check guardrail compliance",
+            "pyThresholdGuardrailScore": 1,
+            "pyTaskDescription": "pyTaskDescription",
+            "pyTaskType": "ApplicationGuardrail"
+          }
+        }
+      ]
+    }
+  ],
+  "errors": []
+}
